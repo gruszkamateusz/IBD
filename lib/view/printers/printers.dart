@@ -1,19 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ibd/models/yellow_dots.dart';
-import 'package:ibd/providers/home_provider.dart';
+import 'package:ibd/models/Printer.dart';
+
+import 'package:ibd/providers/printers_provider.dart';
+import 'package:ibd/view/widgets/drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class Printers extends StatefulWidget {
+  const Printers({Key? key}) : super(key: key);
 
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Printers> createState() => _PrintersState();
 }
 
-class _HomeState extends State<Home> {
+class _PrintersState extends State<Printers> {
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -23,32 +26,47 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
 
-    final homeProvider = Provider.of<HomeProvider>(context);
+   // final provider = Provider.of<PrinterProvider>(context);
 
     return Scaffold(
+      drawer: DrawerApp(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: (){
-        showAddEditDialog(context, YellowDots(), false, homeProvider);
+        onPressed: () async {
+
+                var uri = 'http://127.0.0.1:8080/printers/add?idprinters=10idlocalization=1owner=\"test\"owner=\"type\"';
+            final response = await http.post(
+              Uri.parse(uri),
+                headers: {
+                "Access-Control_Allow_Origin": "*"
+            },
+                );
+
+                final snackBar = SnackBar(content: Text(response.statusCode.toString()));
+
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
       }),
       appBar: AppBar(
         title:Text("IBD"),
         centerTitle: true,
       ),
+      //body:Container(color:Colors.red)
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [Consumer<HomeProvider>(
-        builder: (_, homeProvider, __) =>
-          homeProvider.loading?
+        children: [
+          Consumer<PrinterProvider>(
+        builder: (_, provider, __) =>
+          provider.loading?
       Center(
         child: CircularProgressIndicator()):
       
       Expanded(
         child: ListView.builder(
-          itemCount: homeProvider.list.length,
+          itemCount: provider.list!.length,
           itemBuilder: (context,index){
             return ExpansionTile(
-              title:Text(homeProvider.list[index].data??''),
+              title:Text(provider.list![index].type??''),
               trailing: Container(
                 height: 100,
                 width: 100,
@@ -61,8 +79,9 @@ class _HomeState extends State<Home> {
                     color: Colors.blue,
                     size: 25,
                   ),
+           
                   onPressed: () async {                
-                    showAddEditDialog(context, homeProvider.list[index], true, homeProvider);
+                  //  showAddEditDialog(context, provider.list![index], true, provider);
                   },
               ),
                   IconButton(
@@ -73,20 +92,29 @@ class _HomeState extends State<Home> {
                     size: 25,
                   ),
                   onPressed: () async {
-                                 await homeProvider.removeDot(homeProvider.list[index].id??0).then((value){
+                                 await provider.remove(provider.list![index].id??0,index).then((value){
                                   ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                     behavior: SnackBarBehavior.floating,
-                                    content: Text(value),duration: Duration(milliseconds:4000),)
+                                    content: Text(value),duration: Duration(milliseconds:1000),)
                                     );
                                   });
 
                   },
               )],)),
               children:[
-                Column(children: [
-                  Image(image: AssetImage('assets/yellow_dots.png')),
-                ],)
+                ListTile(
+                  leading: Text("Typ:"),
+                  trailing: Text(provider.list![index].type??''),
+                ),
+                ListTile(
+                  leading: Text("Wlasiciel:"),
+                  trailing: Text(provider.list![index].owner??''),
+                ),
+                ListTile(
+                  leading: Text("Lokalizacja:"),
+                  trailing: Text(provider.list![index].localization.toString()),
+                ),
               ] );}
             )
     )
@@ -100,7 +128,7 @@ class _HomeState extends State<Home> {
   late FormState _form;
 
 
-   showAddEditDialog(BuildContext context,YellowDots yellowDot, bool edit, HomeProvider homeProvider) {
+   showAddEditDialog(BuildContext context,Printer printer, bool edit, PrinterProvider provider) {
 
 
     bool isActive = false;
@@ -109,10 +137,10 @@ class _HomeState extends State<Home> {
     Size size = MediaQuery.of(context).size;
     var reverse = false;
 
-      if( yellowDot != null&&edit){
+      if( printer != null&&edit){
 
-        dotId.text = yellowDot.id.toString();
-        dotDate.text = yellowDot.data!;
+        dotId.text = printer.id.toString();
+        dotDate.text = printer.type!;
 
 
       }else{
@@ -237,7 +265,7 @@ class _HomeState extends State<Home> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           if(edit){
-                              var response = await homeProvider.editDot(yellowDot.id!, dotDate.text);
+                              var response = await provider.edit(printer.id!, dotDate.text);
 
                                     Navigator.of(context).pop();                      
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -247,14 +275,14 @@ class _HomeState extends State<Home> {
                                     );
                           }else{
 
-                              var response = await homeProvider.addDot(int.parse(dotId.text), dotDate.text);
+                              // var response = await provider.add(int.parse(dotId.text), dotDate.text);
 
-                                    Navigator.of(context).pop();                      
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    behavior: SnackBarBehavior.floating,
-                                    content: Text(response),duration: Duration(milliseconds:1000),)
-                                    );
+                              //       Navigator.of(context).pop();                      
+                              //   ScaffoldMessenger.of(context).showSnackBar(
+                              //   SnackBar(
+                              //       behavior: SnackBarBehavior.floating,
+                              //       content: Text(response),duration: Duration(milliseconds:1000),)
+                              //       );
                           }
 
                         }},

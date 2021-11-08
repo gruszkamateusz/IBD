@@ -1,20 +1,22 @@
-import 'package:flutter/cupertino.dart';
-import 'package:ibd/models/yellow_dots.dart';
-import 'package:ibd/services/home_services.dart';
 
-class HomeProvider extends ChangeNotifier {
+import 'package:flutter/cupertino.dart';
+
+import 'package:ibd/models/Printer.dart';
+import 'package:ibd/services/printer_services.dart';
+
+class PrinterProvider extends ChangeNotifier {
 
   
   bool loading = false;
-  List<YellowDots> list = [];
+  List<Printer>? list = [];
 
-  HomeProvider() {
+  PrinterProvider() {
     fetchData();
   }
 
   Future<void> fetchData() async {
     setLoading(true);
-    list = await HomeServices().fetchData();
+    list = await PrinterServices().fetchData();
     setLoading(false);
     notifyListeners();
   }
@@ -23,17 +25,13 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-    Future<String> removeDot(int id) async {
+    Future<String> remove(int id,int index) async {
       var text ='';
     //setLoading(true);
-    var response = await HomeServices().remove(id);
+    var response = await PrinterServices().remove(id);
+
     if(response == 200){
-      var toRemove;
-      list.forEach((element) {
-        if(element.id == id){
-          toRemove = element;
-      }});
-      list.remove(toRemove);
+      list!.removeAt(index);
       text = "Poprawnie usunieto zasob";
     }else{
       text = "Nie udalo sie usunac zasobu";
@@ -43,17 +41,13 @@ class HomeProvider extends ChangeNotifier {
 
     return text;
   }
-    Future<String> editDot(int id, String data) async {
+    Future<String> edit(int id, String data) async {
       var text ='';
     //setLoading(true);
-    var response = await HomeServices().remove(id);
+    var response = await PrinterServices().remove(id);
+
     if(response == 200){
-      var toRemove;
-      list.forEach((element) {
-        if(element.id == id){
-          element.data = data;
-      }});
-      list.remove(toRemove);
+
       text = "Poprawnie edytowano zasob";
     }else{
       text = "Nie udalo sie edytowac zasobu";
@@ -63,14 +57,15 @@ class HomeProvider extends ChangeNotifier {
 
     return text;
   }
-      Future<String> addDot(int id, String data) async {
+      Future<String> add(String data) async {
 
       var text ='';
+
     //setLoading(true);
-    var response = await HomeServices().add(id,data);
+
+    var response = await PrinterServices().add(data);
+
     if(response == 201){
-      
-      list.add(YellowDots(id: id, data : data ));
       text = "Poprawnie dodano zasob";
     }else{
       text = "Nie udalo sie dodac zasobu";

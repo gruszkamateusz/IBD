@@ -1,10 +1,26 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:ibd/providers/home_provider.dart';
-import 'package:ibd/view/home/home_page.dart';
+import 'package:ibd/models/Printout.dart';
+import 'package:ibd/providers/dots_provider.dart';
+import 'package:ibd/providers/localization_provider.dart';
+import 'package:ibd/providers/printers_provider.dart';
+import 'package:ibd/providers/printouts_provider.dart';
+import 'package:ibd/view/dots/dots.dart';
+import 'package:ibd/view/home/home.dart';
+import 'package:ibd/view/localization/localization.dart';
+import 'package:ibd/view/printers/printers.dart';
+import 'package:ibd/view/printouts/printouts.dart';
 import 'package:ibd/view/routes.dart';
 import 'package:provider/provider.dart';
+
+import 'MyHttpsOverrider.dart';
 void main() {
-  runApp(const MyApp());
+ HttpOverrides.global = new MyHttpOverrides();
+  runApp(
+    const MyApp()
+    );
+ 
 }
 
 class MyApp extends StatelessWidget {
@@ -16,10 +32,20 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
-          value: HomeProvider(),
+          value: LocalizationProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: PrintoutProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: PrinterProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: DotProvider(),
         ),
       ],
       child: MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'IBD',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -27,7 +53,10 @@ class MyApp extends StatelessWidget {
       initialRoute: Routes.home,
           routes: {
             Routes.home: (context) => new Home(),
-            Routes.formular: (context) => Container(child: Text("Formularz"),),
+            Routes.printers: (context) => new Printers(),
+            Routes.printouts: (context) => new Printouts(),
+            Routes.dots: (context) => new Dots(),
+            Routes.localization: (context) => new Localization(),
           },
     ));
   }
