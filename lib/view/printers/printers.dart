@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ibd/models/Printer.dart';
@@ -26,7 +28,7 @@ class _PrintersState extends State<Printers> {
   @override
   Widget build(BuildContext context) {
 
-   // final provider = Provider.of<PrinterProvider>(context);
+   final provider = Provider.of<PrinterProvider>(context);
 
     return Scaffold(
       drawer: DrawerApp(),
@@ -34,19 +36,119 @@ class _PrintersState extends State<Printers> {
         child: Icon(Icons.add),
         onPressed: () async {
 
-                var uri = 'http://127.0.0.1:8080/printers/add?idprinters=10idlocalization=1owner=\"test\"owner=\"type\"';
-            final response = await http.post(
-              Uri.parse(uri),
-                headers: {
-                "Access-Control_Allow_Origin": "*"
-            },
-                );
+          TextEditingController localization = TextEditingController();
+          TextEditingController owner = TextEditingController();
+          TextEditingController type = TextEditingController();
 
-                final snackBar = SnackBar(content: Text(response.statusCode.toString()));
 
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          FormState _form;
 
-      }),
+
+          final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+          var reverse = false;
+
+
+     showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              content:  SingleChildScrollView(
+          reverse: reverse,
+          child:Form(
+                  key: _formKey,
+                  child: Container(
+                      margin: EdgeInsets.only(top: 2.0, bottom: 5.0),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            onTap: (){
+                                      setState(() {
+                                      reverse = false;
+                                    });
+                                          },
+                            controller: localization,
+                            validator: (value) {
+                              if(value != null){
+                                try{
+                                  int.parse(value);
+                                  return null;
+                                } catch(e){
+                                  return 'Wartosc nie jest liczba';
+                                }
+                              }else{
+                                return 'Pole jest  puste';
+                              }
+                            },  
+                            decoration: InputDecoration(labelText: 'Lokalizacja'),
+                          ),
+                          TextFormField(
+                            onTap: (){
+                                      setState(() {
+                                      reverse = true;
+                                    });
+                                          },
+                            controller: owner,
+                            validator: (value) {
+                        if(value!=null){
+                                return null;
+                              }else{
+                                return "Pole nie moze byc puste";
+                              }
+                            },
+                            decoration: InputDecoration(labelText: 'Wlasciciel'),
+                          ),
+                          TextFormField(
+                            onTap: (){
+                                      setState(() {
+                                      reverse = true;
+                                    });
+                                          },
+                            controller: type,
+                            validator: (value) {
+                              if(value!=null){
+                                return null;
+                              }else{
+                                return "Pole nie moze byc puste";
+                              }
+                            },
+                            decoration: InputDecoration(labelText: 'Typ'),
+                          ),
+
+                        ],
+                      )))),
+              title: Text('Dodaj drukarke'),
+              actions: <Widget>[
+                InkWell(
+                  child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          
+                          
+            provider
+                .add(Printer(localization: int.parse(localization.text),owner: owner.text,type:type.text))
+                .then((result) => {
+                  print(result),
+
+                          Navigator.of(context).pop(),
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(result),
+                              duration: Duration(milliseconds: 2000),
+                              )
+                            ),
+                    });
+                       
+                        }
+                      },
+                      child: Text("Dodaj drukarkę")),
+                ),
+              ],
+            );
+          });
+        });
+      }
+      ),
       appBar: AppBar(
         title:Text("IBD"),
         centerTitle: true,

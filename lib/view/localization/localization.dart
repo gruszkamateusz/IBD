@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ibd/models/Localization.dart';
 import 'package:ibd/models/Printer.dart';
 import 'package:ibd/models/Printout.dart';
 import 'package:ibd/providers/Dots_provider.dart';
@@ -11,15 +12,15 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-class Localization extends StatefulWidget {
-  const Localization({Key? key}) : super(key: key);
+class PrintersLocalizations extends StatefulWidget {
+  const PrintersLocalizations({Key? key}) : super(key: key);
 
 
   @override
-  State<Localization> createState() => _LocalizationState();
+  State<PrintersLocalizations> createState() => _LocalizationState();
 }
 
-class _LocalizationState extends State<Localization> {
+class _LocalizationState extends State<PrintersLocalizations> {
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -37,20 +38,114 @@ class _LocalizationState extends State<Localization> {
         child: Icon(Icons.add),
         onPressed: () async {
 
-          //  var uri = 'http://127.0.0.1:8080/Dots/all';
-          //  print(Uri.parse(uri));
-          //   final response = await http.get(
-          //     Uri.parse(uri),
-          //       headers: {
-          //       "Access-Control_Allow_Origin": "*"
-          //   },
-            
-          //       );
-          //       print(response.body);
+          TextEditingController city = TextEditingController();
+          TextEditingController street = TextEditingController();
+          TextEditingController postcode = TextEditingController();
 
-          //       final snackBar = SnackBar(content: Text(response.body));
 
-          //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          FormState _form;
+
+
+          final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+          var reverse = false;
+
+
+     showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              content:  SingleChildScrollView(
+          reverse: reverse,
+          child:Form(
+                  key: _formKey,
+                  child: Container(
+                      margin: EdgeInsets.only(top: 2.0, bottom: 5.0),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            onTap: (){
+                                      setState(() {
+                                      reverse = false;
+                                    });
+                                          },
+                            controller: city,
+                            validator: (value) {
+                              if(value!=null){
+                                return null;
+                              }else{
+                                return "Pole nie moze byc puste";
+                              }
+                            },  
+                            decoration: InputDecoration(labelText: 'Miasto'),
+                          ),
+                          TextFormField(
+                            onTap: (){
+                                      setState(() {
+                                      reverse = true;
+                                    });
+                                          },
+                            controller: street,
+                            validator: (value) {
+                        if(value!=null){
+                                return null;
+                              }else{
+                                return "Pole nie moze byc puste";
+                              }
+                            },
+                            decoration: InputDecoration(labelText: 'Ulica'),
+                          ),
+                          TextFormField(
+                            onTap: (){
+                                      setState(() {
+                                      reverse = true;
+                                    });
+                                          },
+                            controller: postcode,
+                            validator: (value) {
+                              if(value!=null){
+                                return null;
+                              }else{
+                                return "Pole nie moze byc puste";
+                              }
+                            },
+                            decoration: InputDecoration(labelText: 'Kod pocztowy'),
+                          ),
+
+                        ],
+                      )))),
+              title: Text('Dodaj lokalizacje'),
+              actions: <Widget>[
+                InkWell(
+                  child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          
+                          
+            provider
+                .add(
+                  Localization(city: city.text,postcode: postcode.text,street:street.text)
+                  )
+                .then((result) => {
+                  print(result),
+
+                          Navigator.of(context).pop(),
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(result),
+                              duration: Duration(milliseconds: 2000),
+                              )
+                            ),
+                    });
+                       
+                        }
+                      },
+                      child: Text("Dodaj lokalizacje")),
+                ),
+              ],
+            );
+          });
+        });
 
       }),
       appBar: AppBar(
@@ -98,13 +193,13 @@ class _LocalizationState extends State<Localization> {
                   ),
                   onPressed: () async {
 
-                                //  await provider.removeDot(provider.list![index].id??0,index).then((value){
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                // SnackBar(
-                                //     behavior: SnackBarBehavior.floating,
-                                //     content: Text(value),duration: Duration(milliseconds:1000),)
-                                //     );
-                                //   });
+                                 await provider.remove(provider.list![index].idlocalization??0,index).then((value){
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    content: Text(value),duration: Duration(milliseconds:1000),)
+                                    );
+                                  });
 
                   },
               )],)),

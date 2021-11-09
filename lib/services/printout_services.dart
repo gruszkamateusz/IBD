@@ -46,27 +46,23 @@ Future<List<Printout>?> fetchData() async {
 
       return response.statusCode;
   }
-
-    Future<int> add(int id, String data) async {
+     
+    Future<int> add(Printout data) async {
       
-      await Future.delayed(Duration(seconds: 1));
-
-    if(id != 0){
-        return 201;
-    }else{
-      return 404;
-    }
-
+          var body = json.encode({
+              "title":data.title,
+              "date":data.date,
+            });
+                var uri = 'http://127.0.0.1:8080/printouts/add';
+            final response = await http.post(
+              Uri.parse(uri),
+                headers: {
+                "Content-type": "application/json",
+                "Access-Control_Allow_Origin": "*"
+            },
+            body:body
+                );
+                return response.statusCode;
   }
-      Future<int> edit(int id, String data) async {
-      
-    await Future.delayed(Duration(seconds: 1));
-
-    if(id != 0){
-        return 200;
-    }else{
-      return 404;
-    }
-
   }
-}
+

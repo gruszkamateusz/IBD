@@ -57,7 +57,7 @@ class PrinterProvider extends ChangeNotifier {
 
     return text;
   }
-      Future<String> add(String data) async {
+      Future<String> add(Printer data) async {
 
       var text ='';
 
@@ -65,7 +65,9 @@ class PrinterProvider extends ChangeNotifier {
 
     var response = await PrinterServices().add(data);
 
-    if(response == 201){
+    if(response == 200){
+
+      list!.add(data);
       text = "Poprawnie dodano zasob";
     }else{
       text = "Nie udalo sie dodac zasobu";

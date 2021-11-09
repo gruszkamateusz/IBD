@@ -26,7 +26,7 @@ class PrintoutProvider extends ChangeNotifier {
     loading = value;
     notifyListeners();
   }
-    Future<String> remove(int id,int index) async {
+        Future<String> remove(int id,int index) async {
       var text ='';
     //setLoading(true);
     var response = await PrintoutsServices().remove(id);
@@ -36,6 +36,25 @@ class PrintoutProvider extends ChangeNotifier {
       text = "Poprawnie usunieto zasob";
     }else{
       text = "Nie udalo sie usunac zasobu";
+    }
+    //setLoading(false);
+    notifyListeners();
+
+    return text;
+  }
+
+  add(Printout printout) async {
+          var text ='';
+
+    //setLoading(true);
+
+    var response = await PrintoutsServices().add(printout);
+
+    if(response == 200){
+            list!.add(printout);
+      text = "Poprawnie dodano zasob";
+    }else{
+      text = "Nie udalo sie dodac zasobu";
     }
     //setLoading(false);
     notifyListeners();

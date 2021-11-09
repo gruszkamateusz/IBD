@@ -74,7 +74,7 @@ class DrawerApp extends StatelessWidget{
 
                                      Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Localization()),
+                        MaterialPageRoute(builder: (context) => PrintersLocalizations()),
                       );
 
                 },

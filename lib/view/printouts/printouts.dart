@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ibd/models/Printer.dart';
+import 'package:ibd/models/Printout.dart';
 import 'package:ibd/providers/printers_provider.dart';
 import 'package:ibd/providers/printouts_provider.dart';
 import 'package:ibd/view/printers/printers.dart';
@@ -28,7 +29,7 @@ class _PrintoutsState extends State<Printouts> {
   @override
   Widget build(BuildContext context) {
 
-    //final provider = Provider.of<PrintoutProvider>(context);
+    final provider = Provider.of<PrintoutProvider>(context);
 
     return Scaffold(
       drawer: DrawerApp(),
@@ -36,20 +37,133 @@ class _PrintoutsState extends State<Printouts> {
         child: Icon(Icons.add),
         onPressed: () async {
 
-          //  var uri = 'http://127.0.0.1:8080/printouts/all';
-          //  print(Uri.parse(uri));
-          //   final response = await http.get(
-          //     Uri.parse(uri),
-          //       headers: {
-          //       "Access-Control_Allow_Origin": "*"
-          //   },
-            
-          //       );
-          //       print(response.body);
+ TextEditingController title = TextEditingController();
+          TextEditingController dateFrom = TextEditingController();
 
-          //       final snackBar = SnackBar(content: Text(response.body));
 
-          //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          FormState _form;
+
+
+          final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+          var reverse = false;
+
+
+     showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              content:  SingleChildScrollView(
+          reverse: reverse,
+          child:Form(
+                  key: _formKey,
+                  child: Container(
+                      margin: EdgeInsets.only(top: 2.0, bottom: 5.0),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            onTap: (){
+                                      setState(() {
+                                      reverse = false;
+                                    });
+                                          },
+                            controller: title,
+                            validator: (value) {
+                              if(value != null){
+                                return null;
+                              }else{
+                                return 'Pole jest  puste';
+                              }
+                            },  
+                            decoration: InputDecoration(labelText: 'Tytul'),
+                          ),
+                                       Container(
+                        height: 60,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Container(
+                          //margin: EdgeInsets.only(top: 10, bottom: 10),
+                          child: InkWell(
+                            onTap: () async {
+                              DateTime date = DateTime(1900);
+                              TimeOfDay dateTime =
+                                  TimeOfDay(hour: 12, minute: 0);
+                              date = (await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime(2100)))!;
+                              dateTime = (await showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay(hour: 12, minute: 0)))!;
+                              if (date != null) {
+                                if(dateTime !=null){
+                                date = date.add(Duration(hours: dateTime.hour, minutes : dateTime.minute ));
+                                }
+
+                                dateFrom.text = DateFormat("yyyy-MM-dd HH:mm").format(date);
+                              }
+                            },
+                            child: IgnorePointer(
+                              child: new TextFormField(
+                                  controller: dateFrom,
+                                  decoration: new InputDecoration(
+                                      hintText: "Data od",
+                                      labelText: "Data od"),
+                                  // validator: validateTob,
+                                  onSaved: (value) {
+                                      dateFrom.text = value!;
+                                  },
+                                  onChanged: (value) {
+                                      dateFrom.text = value;
+
+                                  },
+                                  // ignore: missing_return
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return "Podaj date od";
+                                    }
+                                    return null;
+                                  }),
+                            ),
+                          ),
+                        ),
+                      ])
+  ),
+
+                        ],
+                      )))),
+              title: Text('Dodaj wydruk'),
+              actions: <Widget>[
+                InkWell(
+                  child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          
+                          
+            provider
+                .add(Printout(title: title.text,date: dateFrom.text))
+                .then((result) => {
+                  print(result),
+
+                          Navigator.of(context).pop(),
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(result),
+                              duration: Duration(milliseconds: 2000),
+                              )
+                            ),
+                    });
+                       
+                        }
+                      },
+                      child: Text("Dodaj wydruk")),
+                ),
+              ],
+            );
+          });
+        });
 
       }),
       appBar: AppBar(
@@ -95,6 +209,14 @@ class _PrintoutsState extends State<Printouts> {
                     size: 25,
                   ),
                   onPressed: () async {
+
+                                                     await provider.remove(provider.list![index].id??0,index).then((value){
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    content: Text(value),duration: Duration(milliseconds:1000),)
+                                    );
+                                  });
 
                   },
               )],)),

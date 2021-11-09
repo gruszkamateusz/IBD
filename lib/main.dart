@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:ibd/models/Printout.dart';
 import 'package:ibd/providers/dots_provider.dart';
 import 'package:ibd/providers/localization_provider.dart';
 import 'package:ibd/providers/printers_provider.dart';
@@ -56,7 +55,7 @@ class MyApp extends StatelessWidget {
             Routes.printers: (context) => new Printers(),
             Routes.printouts: (context) => new Printouts(),
             Routes.dots: (context) => new Dots(),
-            Routes.localization: (context) => new Localization(),
+            Routes.localization: (context) => new PrintersLocalizations(),
           },
     ));
   }
