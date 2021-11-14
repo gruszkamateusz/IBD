@@ -192,7 +192,6 @@ class _LocalizationState extends State<PrintersLocalizations> {
                     size: 25,
                   ),
                   onPressed: () async {
-                    print("Localization id ${provider.list![index].idlocalization}");
                       if(provider.list![index].idlocalization!=null){
                                  await provider.remove(provider.list![index].idlocalization??0,index).then((value){
                                   ScaffoldMessenger.of(context).showSnackBar(

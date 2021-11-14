@@ -97,7 +97,7 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment : CrossAxisAlignment.center,
                       children: [
                         Text("Ilosc wydruków: ", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400)),
-                        Text(dotProvider.list!.length.toString(), style: TextStyle(fontSize: 50, fontWeight: FontWeight.w600))
+                        Text(printoutProvider.list!.length.toString(), style: TextStyle(fontSize: 50, fontWeight: FontWeight.w600))
                       ]
                 ),
               ))),
