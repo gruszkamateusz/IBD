@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ibd/models/Localization.dart';
 import 'package:ibd/models/Printer.dart';
 
 import 'package:ibd/providers/printers_provider.dart';
@@ -124,9 +125,9 @@ class _PrintersState extends State<Printers> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           
-                          
+                          // refactor !!!!!!!!!!!
             provider
-                .add(Printer(localization: int.parse(localization.text),owner: owner.text,type:type.text))
+                .add(Printer(localization: Localization(),owner: owner.text,type:type.text))
                 .then((result) => {
                   print(result),
 
@@ -213,9 +214,22 @@ class _PrintersState extends State<Printers> {
                   leading: Text("Wlasiciel:"),
                   trailing: Text(provider.list![index].owner??''),
                 ),
+                ExpansionTile(
+                   title: Text("Lokalizacja:"),
+                   children:[
                 ListTile(
-                  leading: Text("Lokalizacja:"),
-                  trailing: Text(provider.list![index].localization.toString()),
+                  leading: Text("Miasto:"),
+                  trailing: Text(provider.list![index].localization!.city.toString()),
+                ),
+                ListTile(
+                  leading: Text("Ulica:"),
+                  trailing: Text(provider.list![index].localization!.street.toString()),
+                ),
+                ListTile(
+                  leading: Text("Kod poczowy:"),
+                  trailing: Text(provider.list![index].localization!.postcode.toString()),
+                ),
+              ] 
                 ),
               ] );}
             )

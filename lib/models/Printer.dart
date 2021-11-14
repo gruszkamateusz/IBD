@@ -1,5 +1,7 @@
+import 'package:ibd/models/Localization.dart';
+
 class Printer {
-  int? localization;
+  Localization? localization;
   String? owner;
   String? type;
   int? id;
@@ -7,7 +9,10 @@ class Printer {
   Printer({this.localization, this.owner, this.type, this.id});
 
   Printer.fromJson(Map<String, dynamic> json) {
-    localization = json['localization'];
+    localization = 
+      json['localization'] != null
+        ? new Localization.fromJson(json['localization'])
+        : null;
     owner = json['owner'];
     type = json['type'];
     id = json['id'];
@@ -15,7 +20,9 @@ class Printer {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['localization'] = this.localization;
+    if (this.localization != null) {
+      data['localization'] = this.localization!.toJson();
+    }
     data['owner'] = this.owner;
     data['type'] = this.type;
     data['id'] = this.id;

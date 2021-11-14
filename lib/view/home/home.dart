@@ -113,7 +113,7 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment : CrossAxisAlignment.center,
                       children: [
                         Text("Ilość przeanalizowanych kropek: ", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400)),
-                        Text(localizationProvider.list!.length.toString(), style: TextStyle(fontSize: 50, fontWeight: FontWeight.w600))
+                        Text(dotProvider.list!.length.toString(), style: TextStyle(fontSize: 50, fontWeight: FontWeight.w600))
                       ]
                 ),
               )))

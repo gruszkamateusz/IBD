@@ -221,9 +221,35 @@ class _PrintoutsState extends State<Printouts> {
                   },
               )],)),
               children:[
+                ExpansionTile(
+                   title: Text("Drukarka:"),
+                   children:[
                 ListTile(
-                  leading: Text("IdPrinter:"),
-                  trailing: Text(provider.list![index].idprinter.toString()),
+                  leading: Text("Wlasciciel:"),
+                  trailing: Text(provider.list![index].printer!.owner.toString()),
+                ),
+                ListTile(
+                  leading: Text("Typ:"),
+                  trailing: Text(provider.list![index].printer!.type.toString()),
+                ),
+                ExpansionTile(
+                   title: Text("Lokalizacja:"),
+                   children:[
+                ListTile(
+                  leading: Text("Miasto:"),
+                  trailing: Text(provider.list![index].printer!.localization!.city.toString()),
+                ),
+                ListTile(
+                  leading: Text("Ulica:"),
+                  trailing: Text(provider.list![index].printer!.localization!.street.toString()),
+                ),
+                ListTile(
+                  leading: Text("Kod poczowy:"),
+                  trailing: Text(provider.list![index].printer!.localization!.postcode.toString()),
+                ),
+              ] 
+                ),
+              ] 
                 ),
                 ListTile(
                   leading: Text("Data:"),

@@ -26,6 +26,7 @@ Future<List<Printer>?> fetchData() async {
             },
                 );
             if (response.statusCode == 200) {
+              //print(response.body);
               return compute(parsePrinters, response.body);
             }
             }on Error catch (e) {
