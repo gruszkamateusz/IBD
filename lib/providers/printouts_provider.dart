@@ -50,7 +50,7 @@ class PrintoutProvider extends ChangeNotifier {
 
     var response = await PrintoutsServices().add(printout);
 
-    if(response == 200){
+    if(response == 201||response == 200){
             list!.add(printout);
       text = "Poprawnie dodano zasob";
     }else{

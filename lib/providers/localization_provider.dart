@@ -36,8 +36,8 @@ class LocalizationProvider extends ChangeNotifier {
 
     var response = await LocalizationServices().add(data);
 
-    if(response == 201){
-                  list!.add(data);
+    if(response == 201||response == 200){
+      list!.add(data);
       text = "Poprawnie dodano zasob";
     }else{
       text = "Nie udalo sie dodac zasobu";

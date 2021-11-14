@@ -217,18 +217,22 @@ class _PrintersState extends State<Printers> {
                 ExpansionTile(
                    title: Text("Lokalizacja:"),
                    children:[
+                     provider.list![index].localization != null?
                 ListTile(
                   leading: Text("Miasto:"),
                   trailing: Text(provider.list![index].localization!.city.toString()),
-                ),
-                ListTile(
-                  leading: Text("Ulica:"),
-                  trailing: Text(provider.list![index].localization!.street.toString()),
-                ),
-                ListTile(
-                  leading: Text("Kod poczowy:"),
-                  trailing: Text(provider.list![index].localization!.postcode.toString()),
-                ),
+                ):ListTile(
+                  leading: Text("Miasto:"),
+                  trailing: Text("brak"),
+                )
+                // ListTile(
+                //   leading: Text("Ulica:"),
+                //   trailing: Text(provider.list![index].localization!.street.toString()),
+                // ),
+                // ListTile(
+                //   leading: Text("Kod poczowy:"),
+                //   trailing: Text(provider.list![index].localization!.postcode.toString()),
+                // ),
               ] 
                 ),
               ] );}

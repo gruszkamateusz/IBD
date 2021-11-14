@@ -55,7 +55,7 @@ class DotProvider extends ChangeNotifier {
 
     var response = await DotServices().add(dot);
 
-    if(response == 201){
+    if(response == 201||response == 200){
             list!.add(dot);
       text = "Poprawnie dodano zasob";
     }else{

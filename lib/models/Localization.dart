@@ -7,7 +7,7 @@ class Localization {
   Localization({this.idlocalization, this.city, this.street, this.postcode});
 
   Localization.fromJson(Map<String, dynamic> json) {
-    idlocalization = json['idlocalization'];
+    idlocalization = json['id'];
     city = json['city'];
     street = json['street'];
     postcode = json['postcode'];
@@ -15,7 +15,7 @@ class Localization {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['idlocalization'] = this.idlocalization;
+    data['id'] = this.idlocalization;
     data['city'] = this.city;
     data['street'] = this.street;
     data['postcode'] = this.postcode;
