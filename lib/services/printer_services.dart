@@ -49,11 +49,7 @@ Future<List<Printer>?> fetchData() async {
 
     Future<int> add(Printer data) async {
       
-          var body = json.encode({
-              "idlocalization":data.localization,
-              "owner":data.owner,
-              "type":data.type
-            });
+          var body = json.encode(data.toJson());
                 var uri = 'http://127.0.0.1:8080/printers/add';
             final response = await http.post(
               Uri.parse(uri),

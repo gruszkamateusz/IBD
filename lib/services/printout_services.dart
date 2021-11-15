@@ -47,12 +47,10 @@ Future<List<Printout>?> fetchData() async {
       return response.statusCode;
   }
      
-    Future<int> add(Printout data) async {
-      
-          var body = json.encode({
-              "title":data.title,
-              "date":data.date,
-            });
+      Future<int> add(Printout data) async {
+
+          var body = "{\"printer\":{\"id\":${data.printer!.id}},\"title\":\"${data.title}\",\"date\":${data.date}}";
+
                 var uri = 'http://127.0.0.1:8080/printouts/add';
             final response = await http.post(
               Uri.parse(uri),
@@ -62,6 +60,7 @@ Future<List<Printout>?> fetchData() async {
             },
             body:body
                 );
+
                 return response.statusCode;
   }
   }

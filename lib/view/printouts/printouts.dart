@@ -21,7 +21,7 @@ class Printouts extends StatefulWidget {
 
 class _PrintoutsState extends State<Printouts> {
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+    Printer? printerValue;
   @override
   void initState() {
     super.initState();
@@ -29,6 +29,7 @@ class _PrintoutsState extends State<Printouts> {
   @override
   Widget build(BuildContext context) {
 
+    final printerProvider = Provider.of<PrinterProvider>(context);
     final provider = Provider.of<PrintoutProvider>(context);
 
     return Scaffold(
@@ -61,22 +62,56 @@ class _PrintoutsState extends State<Printouts> {
                       margin: EdgeInsets.only(top: 2.0, bottom: 5.0),
                       child: Column(
                         children: [
-                          TextFormField(
-                            onTap: (){
-                                      setState(() {
-                                      reverse = false;
-                                    });
-                                          },
-                            controller: title,
-                            validator: (value) {
-                              if(value != null){
-                                return null;
-                              }else{
-                                return 'Pole jest  puste';
-                              }
-                            },  
-                            decoration: InputDecoration(labelText: 'Tytul'),
-                          ),
+                           Container(
+                            child: DropdownButton<Printer?>(
+                                        isExpanded: true,
+                                        value: printerValue,
+                                        icon: const Icon(Icons.arrow_downward),
+                                        iconSize: 24,
+                                        elevation: 24,
+                                        style: const TextStyle(color: Colors.black),
+                                        underline: Container(
+                                          height: 2,
+                                          color: Colors.black,
+                                        ),
+                                         onChanged: (Printer? value){
+                                           setState((){
+                                             printerValue = value;
+                                           });
+                                             
+                                         },
+                                        items: printerProvider.list!.map<DropdownMenuItem<Printer?>>(
+                                              (item) =>
+                                                  new DropdownMenuItem<Printer?>(
+                                                value: item,
+                                                child: Row(
+                                                  children: [
+                                                    Icon(Icons.business_outlined),
+                                                    Text("[${item.id}] ${item.type}",style:TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                                                  
+                                                                ])
+                                                ),
+                                            )
+                                            .toList()
+                                      ),                     
+
+                                    ),
+                          // TextFormField(
+                          //   onTap: (){
+                          //             setState(() {
+                          //             reverse = false;
+                          //           });
+                          //                 },
+                          //   controller: title,
+                          //   validator: (value) {
+                          //     if(value != null){
+                          //       return null;
+                          //     }else{
+                          //       return 'Pole jest  puste';
+                          //     }
+                          //   },  
+                          //   decoration: InputDecoration(labelText: 'Tytul'),
+                          // ),
                                        Container(
                         height: 60,
                     child: Column(
@@ -143,10 +178,8 @@ class _PrintoutsState extends State<Printouts> {
                           
                           
             provider
-                .add(Printout(title: title.text,date: dateFrom.text))
+                .add(Printout(printer: printerValue,title: title.text,date: DateFormat('"yyyy-MM-ddTHH:mm:ss').format(DateTime.parse(dateFrom.text)).toString()))
                 .then((result) => {
-                  print(result),
-
                           Navigator.of(context).pop(),
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -232,23 +265,23 @@ class _PrintoutsState extends State<Printouts> {
                   leading: Text("Typ:"),
                   trailing: Text(provider.list![index].printer!.type.toString()),
                 ),
-                ExpansionTile(
-                   title: Text("Lokalizacja:"),
-                   children:[
-                ListTile(
-                  leading: Text("Miasto:"),
-                  trailing: Text(provider.list![index].printer!.localization!.city.toString()),
-                ),
-                ListTile(
-                  leading: Text("Ulica:"),
-                  trailing: Text(provider.list![index].printer!.localization!.street.toString()),
-                ),
-                ListTile(
-                  leading: Text("Kod poczowy:"),
-                  trailing: Text(provider.list![index].printer!.localization!.postcode.toString()),
-                ),
-              ] 
-                ),
+              //   ExpansionTile(
+              //      title: Text("Lokalizacja:"),
+              //      children:[
+              //   ListTile(
+              //     leading: Text("Miasto:"),
+              //     trailing: Text(provider.list![index].printer!.localization!.city.toString()),
+              //   ),
+              //   ListTile(
+              //     leading: Text("Ulica:"),
+              //     trailing: Text(provider.list![index].printer!.localization!.street.toString()),
+              //   ),
+              //   ListTile(
+              //     leading: Text("Kod poczowy:"),
+              //     trailing: Text(provider.list![index].printer!.localization!.postcode.toString()),
+              //   ),
+              // ] 
+              //   ),
               ] 
                 ),
                 ListTile(

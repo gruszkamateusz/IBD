@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ibd/models/Localization.dart';
 import 'package:ibd/models/Printer.dart';
+import 'package:ibd/providers/localization_provider.dart';
 
 import 'package:ibd/providers/printers_provider.dart';
 import 'package:ibd/view/widgets/drawer.dart';
@@ -21,6 +22,8 @@ class Printers extends StatefulWidget {
 
 class _PrintersState extends State<Printers> {
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+   
+    Localization? localizationValue;
 
   @override
   void initState() {
@@ -30,7 +33,7 @@ class _PrintersState extends State<Printers> {
   Widget build(BuildContext context) {
 
    final provider = Provider.of<PrinterProvider>(context);
-
+final localizationProvider = Provider.of<LocalizationProvider>(context);
     return Scaffold(
       drawer: DrawerApp(),
       floatingActionButton: FloatingActionButton(
@@ -59,30 +62,45 @@ class _PrintersState extends State<Printers> {
           child:Form(
                   key: _formKey,
                   child: Container(
+                     
                       margin: EdgeInsets.only(top: 2.0, bottom: 5.0),
                       child: Column(
                         children: [
-                          TextFormField(
-                            onTap: (){
-                                      setState(() {
-                                      reverse = false;
-                                    });
-                                          },
-                            controller: localization,
-                            validator: (value) {
-                              if(value != null){
-                                try{
-                                  int.parse(value);
-                                  return null;
-                                } catch(e){
-                                  return 'Wartosc nie jest liczba';
-                                }
-                              }else{
-                                return 'Pole jest  puste';
-                              }
-                            },  
-                            decoration: InputDecoration(labelText: 'Lokalizacja'),
-                          ),
+Container(
+                            child: DropdownButton<Localization?>(
+                                        isExpanded: true,
+                                        value: localizationValue,
+                                        icon: const Icon(Icons.arrow_downward),
+                                        iconSize: 24,
+                                        elevation: 24,
+                                        style: const TextStyle(color: Colors.black),
+                                        underline: Container(
+                                          height: 2,
+                                          color: Colors.black,
+                                        ),
+                                         onChanged: (Localization? value){
+                                           setState((){
+                                             localizationValue = value;
+                                           });
+                                             
+                                         },
+                                        items: localizationProvider.list!.map<DropdownMenuItem<Localization?>>(
+                                              (item) =>
+                                                  new DropdownMenuItem<Localization?>(
+                                                value: item,
+                                                child: Row(
+                                                  children: [
+                                                    Icon(Icons.business_outlined),
+                                                    Text("[${item.idlocalization}] ${item.city}",style:TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                                                  
+                                                                ])
+                                                ),
+                                            )
+                                            .toList()
+                                      ),                     
+
+                                    ),
+                          
                           TextFormField(
                             onTap: (){
                                       setState(() {
@@ -127,7 +145,7 @@ class _PrintersState extends State<Printers> {
                           
                           // refactor !!!!!!!!!!!
             provider
-                .add(Printer(localization: Localization(),owner: owner.text,type:type.text))
+                .add(Printer(localization: localizationValue,owner: owner.text,type:type.text))
                 .then((result) => {
                   print(result),
 

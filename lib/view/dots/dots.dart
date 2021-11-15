@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:ibd/models/Dot.dart';
+import 'package:ibd/models/Printer.dart';
 import 'package:ibd/providers/dots_provider.dart';
+import 'package:ibd/providers/printers_provider.dart';
 import 'package:ibd/view/widgets/drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +18,7 @@ class Dots extends StatefulWidget {
 }
 
 class _DotsState extends State<Dots> {
-
+    Printer? printerValue;
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -27,13 +29,15 @@ class _DotsState extends State<Dots> {
   Widget build(BuildContext context) {
 
     final provider = Provider.of<DotProvider>(context);
-    
+
+    final printerProvider = Provider.of<PrinterProvider>(context);
+
     return Scaffold(
       drawer: DrawerApp(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () async {
-
+ TextEditingController printer = TextEditingController();
  TextEditingController title = TextEditingController();
           TextEditingController dateFrom = TextEditingController();
 
@@ -58,6 +62,67 @@ class _DotsState extends State<Dots> {
                       margin: EdgeInsets.only(top: 2.0, bottom: 5.0),
                       child: Column(
                         children: [
+
+ Container(
+                            child: DropdownButton<Printer?>(
+                                        isExpanded: true,
+                                        value: printerValue,
+                                        icon: const Icon(Icons.arrow_downward),
+                                        iconSize: 24,
+                                        elevation: 24,
+                                        style: const TextStyle(color: Colors.black),
+                                        underline: Container(
+                                          height: 2,
+                                          color: Colors.black,
+                                        ),
+                                         onChanged: (Printer? value){
+                                           setState((){
+                                             printerValue = value;
+                                           });
+                                             
+                                         },
+                                        items: printerProvider.list!.map<DropdownMenuItem<Printer?>>(
+                                              (item) =>
+                                                  new DropdownMenuItem<Printer?>(
+                                                value: item,
+                                                child: Row(
+                                                  children: [
+                                                    Icon(Icons.business_outlined),
+                                                    Text("[${item.id}] ${item.type}",style:TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                                                  
+                                                                ])
+                                                ),
+                                            )
+                                            .toList()
+                                      ),                     
+
+                                    ),
+
+
+
+
+
+
+
+
+
+
+                          //                           TextFormField(
+                          //   onTap: (){
+                          //             setState(() {
+                                      
+                          //           });
+                          //                 },
+                          //   controller: printer,
+                          //   validator: (value) {
+                          //     if(value!=null){
+                          //       return null;
+                          //     }else{
+                          //       return "Pole nie moze byc puste";
+                          //     }
+                          //   },  
+                          //   decoration: InputDecoration(labelText: 'Drukarka'),
+                          // ),
                           TextFormField(
                             onTap: (){
                                       setState(() {
@@ -137,10 +202,8 @@ class _DotsState extends State<Dots> {
                   child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          
-                          
             provider
-                .add(Dot(title: title.text,date: dateFrom.text))
+                .add(Dot(printer: printerValue,title: title.text,date: DateFormat('"yyyy-MM-ddTHH:mm:ss').format(DateTime.parse(dateFrom.text)).toString()))
                 .then((result) => {
                   print(result),
 
@@ -234,23 +297,23 @@ class _DotsState extends State<Dots> {
                   leading: Text("Typ:"),
                   trailing: Text(provider.list![index].printer!.type.toString()),
                 ),
-                ExpansionTile(
-                   title: Text("Lokalizacja:"),
-                   children:[
-                ListTile(
-                  leading: Text("Miasto:"),
-                  trailing: Text(provider.list![index].printer!.localization!.city.toString()),
-                ),
-                ListTile(
-                  leading: Text("Ulica:"),
-                  trailing: Text(provider.list![index].printer!.localization!.street.toString()),
-                ),
-                ListTile(
-                  leading: Text("Kod poczowy:"),
-                  trailing: Text(provider.list![index].printer!.localization!.postcode.toString()),
-                ),
-              ] 
-                ),
+              //   ExpansionTile(
+              //      title: Text("Lokalizacja:"),
+              //      children:[
+              //   // ListTile(
+              //   //   leading: Text("Miasto:"),
+              //   //   trailing: Text(provider.list![index].printer!.localization!.city.toString()),
+              //   // ),
+              //   // ListTile(
+              //   //   leading: Text("Ulica:"),
+              //   //   trailing: Text(provider.list![index].printer!.localization!.street.toString()),
+              //   // ),
+              //   // ListTile(
+              //   //   leading: Text("Kod poczowy:"),
+              //   //   trailing: Text(provider.list![index].printer!.localization!.postcode.toString()),
+              //   // ),
+              // ] 
+              //   ),
               ] 
                 ),
               ] );}

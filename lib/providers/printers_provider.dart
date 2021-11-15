@@ -6,7 +6,6 @@ import 'package:ibd/services/printer_services.dart';
 
 class PrinterProvider extends ChangeNotifier {
 
-  
   bool loading = false;
   List<Printer>? list = [];
 

@@ -49,11 +49,9 @@ Future<List<Dot>?> fetchData() async {
   }
 
       Future<int> add(Dot data) async {
-      
-          var body = json.encode({
-              "title":data.title,
-              "date":data.date,
-            });
+
+          var body = "{\"printer\":{\"id\":${data.printer!.id}},\"title\":\"${data.title}\",\"date\":${data.date}}";
+
                 var uri = 'http://127.0.0.1:8080/dots/add';
             final response = await http.post(
               Uri.parse(uri),
@@ -63,6 +61,7 @@ Future<List<Dot>?> fetchData() async {
             },
             body:body
                 );
+
                 return response.statusCode;
   }
 
