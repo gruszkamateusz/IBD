@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:ibd/models/Localization.dart';
 import 'package:http/http.dart' as http;
-
-class LocalizationServices{
-
 List<Localization> parseLocalization(String responseBody) {
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
   return (parsed
       .map<Localization>((json) => Localization.fromJson(json))
       .toList());
 }
+class LocalizationServices{
+
+
 
 Future<List<Localization>?> fetchData() async {
     try{

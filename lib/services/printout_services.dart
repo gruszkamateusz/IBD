@@ -7,15 +7,15 @@ import 'package:ibd/models/Printer.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:ibd/models/Printout.dart';
-
-class PrintoutsServices{
-
 List<Printout> parsePrintout(String responseBody) {
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
   return (parsed
       .map<Printout>((json) => Printout.fromJson(json))
       .toList());
 }
+class PrintoutsServices{
+
+
 
 Future<List<Printout>?> fetchData() async {
     try{

@@ -6,15 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:ibd/models/Printer.dart';
 
 import 'package:http/http.dart' as http;
-
-class PrinterServices{
-
 List<Printer> parsePrinters(String responseBody) {
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
   return (parsed
       .map<Printer>((json) => Printer.fromJson(json))
       .toList());
 }
+class PrinterServices{
+
+
 
 Future<List<Printer>?> fetchData() async {
     try{

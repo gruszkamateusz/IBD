@@ -8,15 +8,15 @@ import 'package:ibd/models/Printer.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:ibd/models/Printout.dart';
-
-class DotServices{
-
 List<Dot> parseDot(String responseBody) {
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
   return (parsed
       .map<Dot>((json) => Dot.fromJson(json))
       .toList());
 }
+class DotServices{
+
+
 
 Future<List<Dot>?> fetchData() async {
     try{
